@@ -28,6 +28,21 @@ Lo que hay que recordar antes de teclear no se escribe en ningún sitio: se ve.
 Las dos veces hace falta un ``git switch main`` primero, y las dos veces se ve
 a ``HEAD`` mudarse al cartelito de la rama que recibe antes de que el merge
 pueda hacer nada.
+
+**Y ``--no-ff`` al final de los dos casos**, que es la única forma de que se
+entienda para qué sirve: la misma bandera, el mismo comando, y en un sitio
+cambia el historial y en el otro no pasa nada.
+
+En el caso 1 se cuenta deshaciendo lo que se acaba de ver: los dos commits
+vuelven a su carril y aparece el commit que no hizo falta. Las dos salidas del
+mismo merge, sobre el mismo dibujo y con los mismos hashes; lo que cambia no
+es el trabajo, es la forma. Si la línea sale recta, dentro de un mes nadie
+sabrá que aquello fue una rama, y por eso muchos equipos ponen la bandera por
+defecto.
+
+En el caso 2 se le añade al comando y el historial **se queda quieto**, porque
+el commit de merge ya era obligatorio: no había fast-forward que prohibir. Ese
+"no pasa nada" es el que cierra la regla, y se ve mejor que enunciándola.
 """
 
 from manim import (
@@ -40,6 +55,7 @@ from manim import (
     FadeOut,
     Flash,
     GrowFromCenter,
+    Indicate,
     LaggedStart,
     Line,
     Transform,
@@ -50,7 +66,7 @@ from animaciones import pulso, teclear
 from componentes import ALTO_BARRA, arista, linea_terminal, nodo_commit
 from componentes import puntero, texto, ventana
 from componentes import titulo as hacer_titulo
-from estilo import CLARO, OK, RAMA_FEATURE, RAMA_MAIN, SECUNDARIO
+from estilo import AMBAR, CLARO, OK, RAMA_FEATURE, RAMA_MAIN, SECUNDARIO
 
 TITULO = "git merge"
 
@@ -108,11 +124,29 @@ SESIONES = (
      ('git commit -m "y el margen"', "cmd")),
     (("git switch main", "cmd"),
      ("Switched to branch 'main'", "ok"),
-     (f"git merge {RAMA}", "cmd")),
+     (f"git merge {RAMA}", "cmd"),
+     ("Fast-forward", "ok")),
     (("git switch main", "cmd"),
      ("Switched to branch 'main'", "ok"),
-     (f"git merge {RAMA}", "cmd")),
+     (f"git merge {RAMA}", "cmd"),
+     ("Merge made by the 'ort' strategy.", "ok")),
+    ((f"git merge --no-ff {RAMA}", "cmd"),
+     ("Merge made by the 'ort' strategy.", "ok")),
 )
+
+
+# --- La otra salida del caso 1: --no-ff ------------------------------------
+# Va pegado al caso 1 y no al 2 porque es el único sitio donde cambia algo:
+# ahí git podía enderezar la línea, y ``--no-ff`` le dice que no lo haga. En
+# el caso 2 no hay nada que decidir —el commit de merge es obligatorio— así
+# que poner la bandera allí no se notaría.
+#
+# Y se cuenta sobre el mismo dibujo, deshaciendo: los dos commits vuelven a su
+# carril y aparece el commit que antes no hizo falta. Los mismos hashes en los
+# dos caminos, para que se vea que lo que cambia es la forma y no el trabajo.
+X_NOFF_MERGE = 2.4
+HASH_NOFF = "e7c2"
+ORDEN_NOFF = f"git merge --no-ff {RAMA}"
 
 
 def _marco_consola():
@@ -237,6 +271,51 @@ def construir(scene):
     scene.play(*[pulso(a, RAMA_MAIN, 0.7) for a in rama_aristas], run_time=0.9)
     _plantar(scene, p_main, p_head, rama_nodos[-1], direccion=DOWN,
              run_time=1.0)
+    # Y git lo dice con su palabra: ``Fast-forward``. Sale al final y no con el
+    # comando porque así el nombre cae sobre la maniobra ya hecha.
+    teclear(scene, VGroup(marco_consola, sesion), desde=3, ritmo=0.32)
+    scene.next_slide()
+
+    # ---------------------- La otra salida del mismo merge -----------------
+    # Mismo caso, misma rama, otra bandera. Los dos commits vuelven a su
+    # carril y git fabrica el commit que hace un momento no hizo falta: la
+    # horquilla se queda dibujada, y dentro de un mes se podrá ver que aquello
+    # fue una rama. Es lo único que cambia, y es todo el motivo de ``--no-ff``.
+    scene.play(FadeOut(sesion), run_time=0.3)
+    sesion = _sesion(3)
+    teclear(scene, VGroup(marco_consola, sesion), hasta=1, ritmo=0.32)
+
+    subidos = VGroup(*[
+        nodo_commit(h, RAMA_FEATURE, RADIO, TAM_HASH).move_to([x, Y_ALTA, 0])
+        for x, h in zip(X_FF_RAMA, HASHES_FF_RAMA)
+    ])
+    horquilla = VGroup(
+        arista(nodos[-1], subidos[0], RAMA_FEATURE, RADIO),
+        arista(subidos[0], subidos[1], RAMA_FEATURE, RADIO),
+    )
+    scene.play(
+        *[Transform(n, s) for n, s in zip(rama_nodos, subidos)],
+        *[Transform(a, h) for a, h in zip(rama_aristas, horquilla)],
+        p_rama.animate.next_to(subidos[-1], UP, buff=BUFF_PUNTERO),
+        run_time=1.1,
+    )
+
+    # Y el commit que no existía: con dos padres, como el del caso 2, aunque
+    # aquí main no se hubiera movido ni un paso.
+    mff = nodo_commit(HASH_NOFF, RAMA_MAIN, RADIO_MERGE, TAM_HASH)
+    mff.move_to([X_NOFF_MERGE, Y_BASE, 0])
+    padres_ff = VGroup(arista(nodos[-1], mff, RAMA_MAIN, RADIO),
+                       arista(subidos[-1], mff, RAMA_FEATURE, RADIO))
+
+    teclear(scene, VGroup(marco_consola, sesion), desde=1, ritmo=0.32)
+    scene.play(Create(padres_ff[0]), Create(padres_ff[1]), run_time=0.8)
+    scene.play(
+        GrowFromCenter(mff),
+        Flash(mff, color=AMBAR, line_length=0.25, num_lines=16,
+              flash_radius=RADIO_MERGE + 0.35),
+        run_time=0.8,
+    )
+    _plantar(scene, p_main, p_head, mff, direccion=DOWN, run_time=0.9)
     scene.next_slide()
 
     # ---------------------- Caso 2: las dos avanzaron ----------------------
@@ -264,7 +343,8 @@ def construir(scene):
     scene.play(
         FadeOut(nodos), FadeOut(aristas), FadeOut(rama_nodos),
         FadeOut(rama_aristas), FadeOut(p_main), FadeOut(p_rama),
-        FadeOut(p_head), FadeOut(sesion), run_time=0.6,
+        FadeOut(p_head), FadeOut(sesion), FadeOut(mff), FadeOut(padres_ff),
+        run_time=0.6,
     )
     scene.play(
         LaggedStart(*[GrowFromCenter(n) for n in [*base, *alta]],
@@ -299,6 +379,20 @@ def construir(scene):
     _plantar(scene, q_main, q_head, m, direccion=DOWN, run_time=0.8)
     # Y las dos flechas hacia atrás, una por rama: eso es el commit de merge.
     scene.play(*[pulso(p, CLARO, 0.8) for p in padres], run_time=1.0)
+    teclear(scene, VGroup(marco_consola, sesion), desde=3, ritmo=0.32)
+    scene.next_slide()
+
+    # ---------------------- La misma bandera, aquí -------------------------
+    # Y aquí es donde la regla se cierra sola: se le añade ``--no-ff`` al mismo
+    # comando y no pasa absolutamente nada. El dibujo ya era ese, porque el
+    # commit de merge era obligatorio: no había fast-forward que prohibir. Lo
+    # que se ve es el comando cambiando y el historial quieto, que es la mejor
+    # forma de decir que la bandera solo sirve para el caso de antes.
+    con_bandera = linea_terminal(ORDEN_NOFF, "cmd", TAM_SESION)
+    con_bandera.move_to(sesion[2], LEFT)
+    scene.play(Transform(sesion[2], con_bandera), run_time=0.9)
+    scene.play(Indicate(m, color=RAMA_MAIN, scale_factor=1.12),
+               *[pulso(p, RAMA_MAIN, 0.7) for p in padres], run_time=1.0)
     scene.wait(0.3)
 
     scene.next_slide()

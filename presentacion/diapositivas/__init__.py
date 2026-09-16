@@ -28,12 +28,10 @@ from . import (
     fork_y_pr,
     git_amend,
     git_checkout,
-    git_clone,
     git_diff,
-    git_fetch,
+    git_fetch_y_pull,
     git_ignore,
     git_init,
-    git_pull,
     git_push,
     git_reflog,
     git_remote,
@@ -169,9 +167,7 @@ class SlidesRemoto:
     slide_local_remoto = _slide(local_remoto.construir)
     slide_git_remote = _slide(git_remote.construir)
     slide_git_push = _slide(git_push.construir)
-    slide_git_clone = _slide(git_clone.construir)
-    slide_git_fetch = _slide(git_fetch.construir)
-    slide_git_pull = _slide(git_pull.construir)
+    slide_git_fetch_y_pull = _slide(git_fetch_y_pull.construir)
     slide_fork_y_pr = _slide(fork_y_pr.construir)
 
 
