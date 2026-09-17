@@ -4,20 +4,20 @@ Charla **Una introducción a Git y GitHub**, hecha en manim.
 
 ## Requisitos
 
-- Python ≥ 3.13 (ver [.python-version](.python-version))
-- [uv](https://docs.astral.sh/uv/) para gestionar el entorno y las dependencias
+- Python ≥ 3.13 
+- [uv](https://docs.astral.sh/uv/) 
 
 ## Uso
 
 ```bash
-# --- La presentación ---
+# La presentación 
 cd presentacion
 uv sync                                                        # instalar su entorno
 
 uv run python -m manim_slides render main.py presentation      # renderizar
 uv run python -m manim_slides present presentation             # presentar
 
-# --- La parte práctica ---
+# La práctica
 cd practica
 uv sync                                                        # instalar su entorno
 ```
