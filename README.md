@@ -1,6 +1,6 @@
 # Git y GitHub
 
-Charla **Una introducción a Git y GitHub** hecha en manim, con su parte práctica.
+Charla **Una introducción a Git y GitHub**, hecha en manim.
 
 ## Requisitos
 
@@ -58,7 +58,9 @@ Resuelve un reto de [Deep-ML](https://www.deep-ml.com/problems) y aporta **a est
 - ByteByteGo. *How Git Works: Explained in 4 Minutes*. YouTube. https://www.youtube.com/watch?v=e9lnsKot_SQ
 - ByteByteGo. *Git MERGE vs REBASE: Everything You Need to Know*. YouTube. https://www.youtube.com/watch?v=0chZFIZLR_0
 - pildorasdeprogramacion. Git amend para arreglar tus commits de git. Youtube. https://www.youtube.com/shorts/u9SPJqK2bqM
-
+- Andrew Burgess. git diff: everything you need to know. Youtube. https://www.youtube.com/watch?v=F1van9nShjA&t=198s
+- Philomatics. 
+Never fear merge conflicts again - git merge/pull tutorial. Youtube. https://www.youtube.com/watch?v=DloR0BOGNU0
 ### Datos y encuestas
 
 - *Developer Survey 2022 — Version control*. Stack Overflow. https://survey.stackoverflow.co/2022/#technology-version-control
@@ -66,3 +68,5 @@ Resuelve un reto de [Deep-ML](https://www.deep-ml.com/problems) y aporta **a est
 ### Retos
 
 - *Practice Problems*. Deep-ML. https://www.deep-ml.com/problems
+
+
