@@ -4,7 +4,7 @@ Charla **Una introducción a Git y GitHub**, hecha en manim.
 
 ## Requisitos
 
-- Python ≥ 3.13 
+- [Python ≥ 3.13](https://www.python.org)
 - [uv](https://docs.astral.sh/uv/) 
 
 ## Uso
