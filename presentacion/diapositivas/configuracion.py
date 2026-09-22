@@ -1,19 +1,3 @@
-"""Diapositiva 8 — configurar git: decirle quién eres.
-
-Lo primero que hay que hacer después de instalar, y lo único que git te va a
-exigir antes de dejarte hacer un commit: decirle quién eres. Ese nombre y ese
-correo se copian dentro de **cada commit que hagas**, así que conviene ponerlos
-bien a la primera y con el mismo correo que se use luego en GitHub.
-
-La tercera línea es la que evita el lío de nombres: git sigue creando la
-primera rama como ``master`` cuando el estándar de hoy —GitHub el primero— es
-``main``, así que se cambia una vez y ya nunca más.
-
-Debajo, los tres niveles de configuración: gana siempre el más cercano al
-repositorio, que es exactamente lo que uno quiere cuando trabaja con el correo
-de la universidad en un sitio y el del trabajo en otro.
-"""
-
 from manim import (
     DOWN,
     RIGHT,
@@ -42,7 +26,6 @@ IDENTIDAD = (
     ("init.defaultBranch=main", "out"),
 )
 
-# (bandera, dónde vive, a qué afecta, color)
 NIVELES = (
     ("--system", "todo el equipo", SECUNDARIO),
     ("--global", "~/.gitconfig", PRIMARIO),
@@ -51,7 +34,6 @@ NIVELES = (
 
 
 def _nivel(bandera, donde, color):
-    """Una de las tres cajas de configuración, con su bandera y su archivo."""
     etiqueta = texto(bandera, 17, color=color)
     ruta = texto(donde, 13, color=SECUNDARIO)
     dentro = VGroup(etiqueta, ruta).arrange(DOWN, buff=0.12)
@@ -65,15 +47,12 @@ def _nivel(bandera, donde, color):
 def construir(scene):
     encabezado = hacer_titulo("Configurar")
 
-    # Diez renglones piden interlineado corto: con el buff por defecto la
-    # ventana se comería el título por arriba y los niveles por abajo.
     consola = terminal(IDENTIDAD, tam=14, buff=0.12, margen=0.40)
     consola.move_to([0, 0.42, 0])
 
     niveles = VGroup(*[_nivel(*n) for n in NIVELES])
     niveles.arrange(RIGHT, buff=0.55).move_to([0, -2.60, 0])
 
-    # ------------------------------ montaje --------------------------------
     scene.play(FadeIn(encabezado, shift=DOWN * 0.2), run_time=0.6)
     scene.play(FadeIn(consola[0]), run_time=0.5)
     teclear(scene, consola, ritmo=0.4)

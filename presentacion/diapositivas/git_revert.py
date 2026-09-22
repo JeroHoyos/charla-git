@@ -1,26 +1,3 @@
-"""Diapositiva 18b — ``git revert``: deshacer sin borrar.
-
-Misma forma que ``git_checkout``: la pantalla partida en dos bandas que no se
-juntan.
-
-  * **arriba, la rama** — la cadena de commits con ``HEAD`` y ``main``;
-  * **abajo, tu carpeta ahora** — los archivos que verías si abrieras la
-    carpeta en este instante. Sin etiquetas: el color es el estado, rojo el
-    que tiene el fallo y verde el que ya está bien.
-
-Va justo detrás de ``git_reset`` y contra él: los dos deshacen, pero uno mueve
-la rama hacia atrás y el otro no toca nada de lo que ya está. ``revert`` no
-borra el commit que salió mal, **añade uno nuevo que hace justo lo contrario**.
-El historial crece en vez de encoger y el error se queda escrito, que es
-exactamente lo que quieres cuando el commit ya está en GitHub y otra persona lo
-tiene bajado.
-
-Y la prueba de que no se ha borrado nada no se dice, se hace: al final se viaja
-con ``checkout`` al commit revertido y **sus archivos siguen ahí**, rotos como
-estaban. El fallo no se ha ido del historial; encima de él hay otro commit que
-lo deshace. Se vuelve al presente y la carpeta está otra vez bien.
-"""
-
 from manim import (
     DOWN,
     LEFT,
@@ -44,51 +21,42 @@ from estilo import AMBAR, CLARO, ERROR, OK, RAMA_MAIN, SECUNDARIO
 
 TITULO = "git revert"
 
-# --- Arriba: la rama -------------------------------------------------------
-# Cinco huecos: los cuatro commits que ya había y el que va a nacer al final.
 X_CADENA = (-4.8, -2.4, 0.0, 2.4, 4.8)
 Y_CADENA = 1.35
 RADIO = 0.38
 TAM_HASH = 15
 HASHES = ("0e5f", "77ab", "9c1d", "3f2a")
-CULPABLE = 2              # el commit que metió el fallo
+CULPABLE = 2
 HASH_REVERT = "r7b2"
 TAM_PUNTERO = 15
 BUFF_PUNTERO = 0.42
 
-# --- El corte entre las dos mitades ----------------------------------------
 Y_CORTE = -0.4
 X_ROTULO = -6.35
 TAM_ROTULO = 15
 
-# --- Abajo: tu carpeta -----------------------------------------------------
-# Solo nombre y color: el color es todo lo que hay que leer.
 ARCHIVOS = ("informe.md", "conclusiones.md", "datos.csv")
-TOCADO = 0                # el único que rompió el commit culpable
+TOCADO = 0
 X_ARCHIVOS = (-2.8, 0.2, 3.0)
 Y_ARCHIVOS = -1.7
 ALTO_ARCHIVO = 0.7
 TAM_NOMBRE = 14
 
-# --- El pie: solo el comando -----------------------------------------------
 TAM_ORDEN = 20
 Y_ORDEN = -3.05
 
 
 def _archivo(indice, color):
-    """Un archivo de la carpeta: su icono, su nombre y nada más."""
     icono = archivo(ARCHIVOS[indice], color=color, alto=ALTO_ARCHIVO,
                     tam=TAM_NOMBRE)
     return icono.move_to([X_ARCHIVOS[indice], Y_ARCHIVOS, 0])
 
 
 def _orden(contenido, color=CLARO):
-    """El comando que se acaba de teclear, al pie de la diapositiva."""
     return texto(contenido, TAM_ORDEN, color=color).move_to([0, Y_ORDEN, 0])
 
 
 def _head(nodo, color):
-    """HEAD, plantado encima de un commit y del color que toque."""
     return puntero("HEAD", color, TAM_PUNTERO).next_to(nodo, UP,
                                                        buff=BUFF_PUNTERO)
 
@@ -96,7 +64,6 @@ def _head(nodo, color):
 def construir(scene):
     encabezado = hacer_titulo(TITULO)
 
-    # ---------------------- Las dos bandas ---------------------------------
     nodos = VGroup(*[
         nodo_commit(h, RAMA_MAIN, RADIO, TAM_HASH).move_to([x, Y_CADENA, 0])
         for x, h in zip(X_CADENA, HASHES)
@@ -136,14 +103,10 @@ def construir(scene):
         LaggedStart(*[GrowFromCenter(f) for f in carpeta], lag_ratio=0.25),
         run_time=0.9,
     )
-    # Un solo aviso, y de los que hacen falta: ese commit es el que dejó el
-    # archivo en rojo.
     scene.play(Indicate(nodos[CULPABLE], color=ERROR, scale_factor=1.2),
                run_time=0.8)
     scene.next_slide()
 
-    # ---------------------- El revert --------------------------------------
-    # No se toca el commit malo: nace uno nuevo al final que hace lo contrario.
     orden = _orden(f"git revert {HASHES[CULPABLE]}")
     scene.play(FadeIn(orden, shift=UP * 0.1), run_time=0.45)
 
@@ -160,13 +123,9 @@ def construir(scene):
               flash_radius=RADIO + 0.4),
         run_time=0.9,
     )
-    # Y abajo, lo que se buscaba: el archivo vuelve a estar bien.
     scene.play(Transform(carpeta[TOCADO], _archivo(TOCADO, OK)), run_time=0.8)
     scene.next_slide()
 
-    # ---------------------- La prueba: el fallo sigue ahí ------------------
-    # Se viaja al commit revertido y su carpeta sale tal cual estaba, rota. No
-    # se ha borrado nada: encima hay otro commit que lo deshace, y ya está.
     vuelta_atras = _orden(f"git checkout {HASHES[CULPABLE]}", color=AMBAR)
     scene.play(FadeOut(orden), FadeIn(vuelta_atras, shift=UP * 0.1),
                run_time=0.6)
@@ -175,7 +134,6 @@ def construir(scene):
                run_time=0.8)
     scene.next_slide()
 
-    # ---------------------- Y de vuelta al presente ------------------------
     vuelta = _orden("git checkout main", color=OK)
     scene.play(FadeOut(vuelta_atras), FadeIn(vuelta, shift=UP * 0.1),
                run_time=0.6)

@@ -1,15 +1,3 @@
-"""Diapositiva 32 — próximos pasos.
-
-Lo que no dio tiempo a ver: nueve nombres en una cuadrícula de tres por tres,
-cada uno en su caja y con el nombre tal cual se escribe, que es justo lo que
-hace falta para buscarlo luego.
-
-Debajo de cada uno, entre paréntesis, para qué sirve en una línea: lo justo
-para saber si te hace falta. Sin enlaces y sin cierre debajo —cada uno es una
-tarde de otro día—. El único que no explica nada es ``git push --force``,
-donde el aviso es la explicación.
-"""
-
 from manim import (
     DOWN,
     FadeIn,
@@ -22,7 +10,6 @@ from componentes import texto
 from componentes import titulo as hacer_titulo
 from estilo import CLARO, PRIMARIO, SECUNDARIO, SUPERFICIE
 
-# (nombre, para qué sirve). Una línea corta: aquí no se enseña a usarlos.
 CONCEPTOS = (
     ("github actions", "automatiza al hacer push"),
     ("git bisect", "encuentra el commit culpable"),
@@ -45,7 +32,6 @@ TAM_APOSTILLA = 13
 
 
 def _caja(indice):
-    """Un concepto en su caja, centrado."""
     nombre, apostilla = CONCEPTOS[indice]
     caja = RoundedRectangle(
         width=ANCHO_CAJA, height=ALTO_CAJA, corner_radius=0.16,

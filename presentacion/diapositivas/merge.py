@@ -1,50 +1,3 @@
-"""Diapositiva 15 — ``git merge``: los dos casos.
-
-Misma forma que ``ramas``: la pantalla partida en dos bandas que no se juntan.
-
-  * **arriba, las ramas** — los commits y los cartelitos que los señalan;
-  * **abajo, la terminal** — lo que se teclea y lo que git contesta.
-
-Merge se explica mal cuando se cuenta como una sola cosa, porque git hace dos
-cosas muy distintas según lo que haya pasado en ``main`` mientras tanto, y aquí
-se ven las dos sobre el mismo dibujo, una detrás de otra.
-
-**Caso 1, main no se movió.** La rama se hace delante, como en ``git_reflog``:
-se teclea el ``switch -c`` y los dos ``commit``, y los commits nuevos salen
-arriba, en su carril, que es como los dibuja cualquiera. Y entonces llega el
-truco de la diapositiva: al hacer el merge esos dos commits **bajan** a la
-línea de main. No había nada que mezclar —la rama era main y dos pasos más—,
-así que la línea estaba recta desde el principio y solo hacía falta deslizar la
-pegatina. Por eso no aparece ningún commit nuevo ni se abre ningún editor: la
-maniobra entera es que la línea se endereza y el cartel se desliza.
-
-**Caso 2, main sí avanzó.** Las dos historias se separaron y ya no hay línea
-que enderezar: git fabrica un commit nuevo con **dos padres**, uno por cada
-rama. Es el único commit del historial que apunta hacia atrás dos veces, y es
-lo que deja el rombo que se ve en GitHub. Las dos aristas se encienden al
-final, una por padre, para que se vea de dónde viene cada una.
-
-Lo que hay que recordar antes de teclear no se escribe en ningún sitio: se ve.
-Las dos veces hace falta un ``git switch main`` primero, y las dos veces se ve
-a ``HEAD`` mudarse al cartelito de la rama que recibe antes de que el merge
-pueda hacer nada.
-
-**Y ``--no-ff`` al final de los dos casos**, que es la única forma de que se
-entienda para qué sirve: la misma bandera, el mismo comando, y en un sitio
-cambia el historial y en el otro no pasa nada.
-
-En el caso 1 se cuenta deshaciendo lo que se acaba de ver: los dos commits
-vuelven a su carril y aparece el commit que no hizo falta. Las dos salidas del
-mismo merge, sobre el mismo dibujo y con los mismos hashes; lo que cambia no
-es el trabajo, es la forma. Si la línea sale recta, dentro de un mes nadie
-sabrá que aquello fue una rama, y por eso muchos equipos ponen la bandera por
-defecto.
-
-En el caso 2 se le añade al comando y el historial **se queda quieto**, porque
-el commit de merge ya era obligatorio: no había fast-forward que prohibir. Ese
-"no pasa nada" es el que cierra la regla, y se ve mejor que enunciándola.
-"""
-
 from manim import (
     DOWN,
     LEFT,
@@ -70,10 +23,6 @@ from estilo import AMBAR, CLARO, OK, RAMA_FEATURE, RAMA_MAIN, SECUNDARIO
 
 TITULO = "git merge"
 
-# --- Arriba: las ramas -----------------------------------------------------
-# Dos carriles: el de main abajo y el de la rama de trabajo encima. Los
-# cartelitos van siempre al mismo sitio —main debajo de su commit, la rama
-# encima del suyo— y HEAD a la derecha del cartelito al que está pegado.
 Y_BASE = 0.7
 Y_ALTA = 1.85
 RADIO = 0.33
@@ -81,13 +30,11 @@ TAM_HASH = 14
 TAM_PUNTERO = 15
 BUFF_PUNTERO = 0.28
 
-# Caso 1: main se queda con dos commits y la rama pone otros dos encima.
 X_FF_MAIN = (-4.8, -3.0)
 X_FF_RAMA = (-1.2, 0.6)
 HASHES_FF_MAIN = ("0e5f", "77ab")
 HASHES_FF_RAMA = ("a3c1", "b8e2")
 
-# Caso 2: la horquilla, con main avanzado por su cuenta.
 X_BASE = (-5.0, -3.3, -1.6)
 X_ALTA = (-1.6, 0.1)
 X_MERGE = 1.9
@@ -96,17 +43,13 @@ HASHES_BASE = ("0e5f", "77ab", "c4f0")
 HASHES_ALTA = ("a3c1", "b8e2")
 HASH_MERGE = "m9d3"
 
-# La rama de trabajo, la misma en los dos casos: así lo único que cambia de uno
-# a otro es lo que haya hecho main mientras tanto, que es de lo que va todo.
 RAMA = "experimento"
 
-# --- El corte entre las dos mitades ----------------------------------------
 Y_CORTE = -0.55
 X_ROTULO = -6.35
-Y_ROTULO = 1.28           # en el hueco entre las dos filas
+Y_ROTULO = 1.28
 TAM_ROTULO = 15
 
-# --- Abajo: la terminal ----------------------------------------------------
 ANCHO_CONSOLA = 7.4
 ALTO_CONSOLA = 2.3
 Y_CONSOLA = -2.1
@@ -115,9 +58,6 @@ TAM_SESION = 15
 BUFF_SESION = 0.16
 Y_SESION = Y_CONSOLA + ALTO_CONSOLA / 2 - ALTO_BARRA - 0.25
 
-# La primera tanda hace la rama delante de todos —una línea, un commit—, y las
-# otras dos son los merges. Las dos empiezan igual, con el ``switch`` a la rama
-# que recibe: esa repetición es la que enseña la regla sin enunciarla.
 SESIONES = (
     ((f"git switch -c {RAMA}", "cmd"),
      ('git commit -m "arregla el pie"', "cmd"),
@@ -135,28 +75,17 @@ SESIONES = (
 )
 
 
-# --- La otra salida del caso 1: --no-ff ------------------------------------
-# Va pegado al caso 1 y no al 2 porque es el único sitio donde cambia algo:
-# ahí git podía enderezar la línea, y ``--no-ff`` le dice que no lo haga. En
-# el caso 2 no hay nada que decidir —el commit de merge es obligatorio— así
-# que poner la bandera allí no se notaría.
-#
-# Y se cuenta sobre el mismo dibujo, deshaciendo: los dos commits vuelven a su
-# carril y aparece el commit que antes no hizo falta. Los mismos hashes en los
-# dos caminos, para que se vea que lo que cambia es la forma y no el trabajo.
 X_NOFF_MERGE = 2.4
 HASH_NOFF = "e7c2"
 ORDEN_NOFF = f"git merge --no-ff {RAMA}"
 
 
 def _marco_consola():
-    """La ventana de la terminal, vacía y del tamaño de la tanda más larga."""
     return ventana(ANCHO_CONSOLA, ALTO_CONSOLA, "terminal", 14).move_to(
         [0, Y_CONSOLA, 0])
 
 
 def _sesion(indice):
-    """Las líneas de la tanda ``indice``, colocadas dentro de la ventana."""
     filas = VGroup(*[
         linea_terminal(c, t, TAM_SESION) for c, t in SESIONES[indice]
     ]).arrange(DOWN, buff=BUFF_SESION, aligned_edge=LEFT)
@@ -165,17 +94,11 @@ def _sesion(indice):
 
 
 def _mudar(scene, p_head, cartel, run_time=0.9):
-    """HEAD se muda al cartelito de otra rama: eso es todo lo que hace switch."""
     scene.play(p_head.animate.next_to(cartel, RIGHT, buff=BUFF_PUNTERO),
                run_time=run_time)
 
 
 def _plantar(scene, cartel, p_head, nodo, direccion=UP, run_time=0.5):
-    """Un cartelito se planta en otro commit, con HEAD detrás si va con él.
-
-    Los destinos se calculan antes de animar: si HEAD mirase dónde está el
-    cartelito *ahora*, se quedaría en el sitio viejo y se solaparían.
-    """
     destino = cartel.copy().next_to(nodo, direccion, buff=BUFF_PUNTERO)
     animaciones = [cartel.animate.move_to(destino)]
     if p_head is not None:
@@ -195,7 +118,6 @@ def construir(scene):
     rotulo_consola.move_to([X_ROTULO, Y_CONSOLA, 0], LEFT)
     marco_consola = _marco_consola()
 
-    # ---------------------- El repo de partida -----------------------------
     nodos = VGroup(*[
         nodo_commit(h, RAMA_MAIN, RADIO, TAM_HASH).move_to([x, Y_BASE, 0])
         for x, h in zip(X_FF_MAIN, HASHES_FF_MAIN)
@@ -219,9 +141,6 @@ def construir(scene):
     scene.play(FadeIn(marco_consola), run_time=0.5)
     scene.next_slide()
 
-    # ---------------------- La rama, hecha delante -------------------------
-    # Los commits nuevos salen arriba, en su carril: así es como los dibuja
-    # todo el mundo, y así es como hay que verlos antes de que bajen.
     sesion = _sesion(0)
     teclear(scene, VGroup(marco_consola, sesion), hasta=1, ritmo=0.32)
     p_rama = puntero(RAMA, RAMA_FEATURE, TAM_PUNTERO)
@@ -244,10 +163,6 @@ def construir(scene):
         anterior = nodo
     scene.next_slide()
 
-    # ---------------------- El merge que no lo es --------------------------
-    # main no se ha movido, así que no hay nada que mezclar: los dos commits
-    # bajan a la línea de siempre —estaba recta desde el principio— y la
-    # pegatina se desliza hasta el final.
     scene.play(FadeOut(sesion), run_time=0.3)
     sesion = _sesion(1)
     teclear(scene, VGroup(marco_consola, sesion), hasta=1, ritmo=0.32)
@@ -271,16 +186,9 @@ def construir(scene):
     scene.play(*[pulso(a, RAMA_MAIN, 0.7) for a in rama_aristas], run_time=0.9)
     _plantar(scene, p_main, p_head, rama_nodos[-1], direccion=DOWN,
              run_time=1.0)
-    # Y git lo dice con su palabra: ``Fast-forward``. Sale al final y no con el
-    # comando porque así el nombre cae sobre la maniobra ya hecha.
     teclear(scene, VGroup(marco_consola, sesion), desde=3, ritmo=0.32)
     scene.next_slide()
 
-    # ---------------------- La otra salida del mismo merge -----------------
-    # Mismo caso, misma rama, otra bandera. Los dos commits vuelven a su
-    # carril y git fabrica el commit que hace un momento no hizo falta: la
-    # horquilla se queda dibujada, y dentro de un mes se podrá ver que aquello
-    # fue una rama. Es lo único que cambia, y es todo el motivo de ``--no-ff``.
     scene.play(FadeOut(sesion), run_time=0.3)
     sesion = _sesion(3)
     teclear(scene, VGroup(marco_consola, sesion), hasta=1, ritmo=0.32)
@@ -300,8 +208,6 @@ def construir(scene):
         run_time=1.1,
     )
 
-    # Y el commit que no existía: con dos padres, como el del caso 2, aunque
-    # aquí main no se hubiera movido ni un paso.
     mff = nodo_commit(HASH_NOFF, RAMA_MAIN, RADIO_MERGE, TAM_HASH)
     mff.move_to([X_NOFF_MERGE, Y_BASE, 0])
     padres_ff = VGroup(arista(nodos[-1], mff, RAMA_MAIN, RADIO),
@@ -318,7 +224,6 @@ def construir(scene):
     _plantar(scene, p_main, p_head, mff, direccion=DOWN, run_time=0.9)
     scene.next_slide()
 
-    # ---------------------- Caso 2: las dos avanzaron ----------------------
     base = VGroup(*[
         nodo_commit(h, RAMA_MAIN, RADIO, TAM_HASH).move_to([x, Y_BASE, 0])
         for x, h in zip(X_BASE, HASHES_BASE)
@@ -359,7 +264,6 @@ def construir(scene):
                FadeIn(q_head, shift=LEFT * 0.1), run_time=0.5)
     scene.next_slide()
 
-    # Aquí sí hay que fabricar algo: un commit con dos padres.
     sesion = _sesion(2)
     teclear(scene, VGroup(marco_consola, sesion), hasta=1, ritmo=0.32)
     _mudar(scene, q_head, q_main)
@@ -377,17 +281,10 @@ def construir(scene):
         run_time=0.8,
     )
     _plantar(scene, q_main, q_head, m, direccion=DOWN, run_time=0.8)
-    # Y las dos flechas hacia atrás, una por rama: eso es el commit de merge.
     scene.play(*[pulso(p, CLARO, 0.8) for p in padres], run_time=1.0)
     teclear(scene, VGroup(marco_consola, sesion), desde=3, ritmo=0.32)
     scene.next_slide()
 
-    # ---------------------- La misma bandera, aquí -------------------------
-    # Y aquí es donde la regla se cierra sola: se le añade ``--no-ff`` al mismo
-    # comando y no pasa absolutamente nada. El dibujo ya era ese, porque el
-    # commit de merge era obligatorio: no había fast-forward que prohibir. Lo
-    # que se ve es el comando cambiando y el historial quieto, que es la mejor
-    # forma de decir que la bandera solo sirve para el caso de antes.
     con_bandera = linea_terminal(ORDEN_NOFF, "cmd", TAM_SESION)
     con_bandera.move_to(sesion[2], LEFT)
     scene.play(Transform(sesion[2], con_bandera), run_time=0.9)

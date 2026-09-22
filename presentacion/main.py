@@ -63,7 +63,5 @@ class presentation(
         self.slide_git_push()
         self.slide_git_fetch_y_pull()
         self.slide_fork_y_pr()
-        self.slide_flujos_de_trabajo()
         self.slide_siguientes_pasos()
         self.slide_cierre()
-

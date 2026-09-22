@@ -1,27 +1,3 @@
-"""Diapositiva 14 — el mensaje: lo único del commit que escribes tú.
-
-El historial solo sirve si se puede leer, y un ``git log`` lleno de "cambios",
-"update" y "ahora sí" no vale para nada. Escribir bien el mensaje cuesta diez
-segundos y se los ahorra a quien venga —que casi siempre eres tú, tres meses
-después.
-
-Esta diapositiva es el argumento, y va montada sobre cosas concretas en vez de
-sobre una lista de mensajes buenos y otra de malos:
-
-  * el diff de verdad —tres renglones de un archivo, con su ``-`` en rojo y su
-    ``+`` en verde— y debajo, solo, el mensaje que se escribe casi siempre.
-    Ahí hay una pausa a propósito: es el momento de preguntar qué pasó en ese
-    commit. Después, contra el mismo diff, el mensaje que sí lo dice;
-  * y la consecuencia, que es ``log`` cobrada: dos ``git log --oneline`` uno
-    al lado del otro, el mismo proyecto con los dos historiales. Uno no dice
-    qué cambió ni por qué, que es exactamente para lo que sirve un historial;
-    el otro sí.
-
-Cómo se escribe ese mensaje bueno lo cuenta la siguiente,
-``conventional_commits``, que importa de aquí las piezas del ejemplo para que
-sea literalmente el mismo commit.
-"""
-
 from manim import (
     DOWN,
     LEFT,
@@ -43,29 +19,20 @@ TITULOS = (
     "Crear un buen historial",
 )
 
-# El commit de ejemplo, despiezado: ``conventional_commits`` lo importa de
-# aquí para explicarlo parte por parte.
 TIPO, AMBITO = "fix", "(modelo)"
 DESCRIPCION = "entrena sin el conjunto de prueba"
 MENSAJE = f"{TIPO}: {DESCRIPCION}"
 
-# --- Pantalla 1: el cambio, y lo que se escribe sobre él --------------------
-# Un diff de verdad: su cabecera de hunk, el renglón que se va y el que entra.
-# El cambio es el error clásico de la casa —entrenar con el conjunto de
-# prueba y creerse la métrica—, así que el mensaje bueno tiene algo que
-# decir. Sin sangría a la izquierda, que Pango se la come; la de dentro sí.
 ARCHIVO = "modelo.py"
 DIFF = (
     ("@@ -18,7 +18,7 @@ def entrenar(datos):", "out"),
     ("-   modelo.fit(X_test, y_test)", "err"),
     ("+   modelo.fit(X_train, y_train)", "ok"),
 )
-TAM_DIFF = 21                     # el diff es el protagonista: se lee grande
+TAM_DIFF = 21
 MARGEN_DIFF = 0.5
 Y_DIFF = 1.15
 
-# (mensaje, si vale). El mismo cambio, con el mensaje que no dice nada y con
-# el que sí.
 MENSAJES = (
     ('git commit -m "cambios"', False),
     (f'git commit -m "{MENSAJE}"', True),
@@ -74,9 +41,8 @@ TAM_MENSAJE = 21
 Y_MENSAJES = (-1.3, -2.45)
 X_MARCA = -6.2
 BUFF_MARCA = 0.5
-APAGADO = 0.5                     # lo que se atenúa el mensaje que no vale
+APAGADO = 0.5
 
-# --- Pantalla 2: los dos historiales ---------------------------------------
 LOG_MALO = (
     ("git log --oneline", "cmd"),
     ("3f2a cambios", "out"),
@@ -91,10 +57,10 @@ LOG_BUENO = (
     ("7b0e docs: explica como entrenar", "out"),
     ("1a4d test: cubre el caso vacio", "out"),
 )
-TAM_LOG = 14                      # lo más grande que cabe en media pantalla
+TAM_LOG = 14
 ANCHO_LOG = 6.2
 X_LOGS = (-3.4, 3.4)
-Y_LOGS = -0.55                    # el bloque, centrado en el hueco del título
+Y_LOGS = -0.55
 GLOSA_MALO = "no dice qué cambió ni por qué"
 GLOSA_BUENO = "dice qué cambió y por qué"
 TAM_GLOSA = 21
@@ -102,7 +68,6 @@ Y_GLOSA = 1.7
 
 
 def _marcado(mob, vale):
-    """Pone el ✓ o el ✗ a la izquierda de una línea, en su color."""
     marca = (visto(OK, tam=0.13) if vale else aspa(ERROR, tam=0.13))
     marca.move_to([X_MARCA, mob.get_y(), 0])
     if not vale:
@@ -113,7 +78,6 @@ def _marcado(mob, vale):
 def construir(scene):
     encabezado = hacer_titulo(TITULOS[0])
 
-    # ---------------------- El cambio, y sus dos mensajes ------------------
     diff = terminal(DIFF, tam=TAM_DIFF, nombre=ARCHIVO,
                     margen=MARGEN_DIFF)
     diff.move_to([0, Y_DIFF, 0])
@@ -133,14 +97,11 @@ def construir(scene):
                     lag_ratio=0.35),
         run_time=1.1,
     )
-    # El malo se queda solo en pantalla y con su pausa: es el momento de
-    # preguntar qué pasó aquí. El bueno llega después, contra el mismo diff.
     scene.play(FadeIn(mensajes[0], shift=UP * 0.12), run_time=0.6)
     scene.next_slide()
     scene.play(FadeIn(mensajes[1], shift=UP * 0.12), run_time=0.6)
     scene.next_slide()
 
-    # ---------------------- Y el historial que dejan -----------------------
     otro_encabezado = hacer_titulo(TITULOS[1])
     logs, glosas = VGroup(), VGroup()
     for lineas, x, glosa, color, marca in (

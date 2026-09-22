@@ -1,49 +1,3 @@
-"""Diapositiva 12 — ``git log``: leer el historial.
-
-El comando que dice por dónde has pasado. No cambia nada, así que se puede
-teclear mil veces sin miedo.
-
-Va enganchada a ``que_es_un_commit``: allí cada commit se quedó con su foto
-encima, y aquí lo primero que pasa es que esas fotos se convierten en sus
-mensajes, que es lo que uno lee de un commit cuando ya no ve la foto. La
-cadena es la misma —se importa de allí— y ocupa la franja de arriba para
-dejarle la pantalla a la terminal.
-
-Lo que cuenta la diapositiva es una comparación:
-
-  * ``git log`` a secas suelta la ficha entera de cada commit. Una sola llena
-    la ventana, debajo empieza a asomar la siguiente y se apaga contra el
-    borde, y abajo espera el ``:`` del pager. Ese susto es medio motivo por el
-    que existe la otra forma, y por eso está dibujada la tecla ``q``.
-  * Y luego las banderas, una a una y con su pausa, porque cada una cambia
-    algo que se ve y así ninguna es magia:
-
-      ``--oneline`` encoge esa misma ficha hasta una línea y el historial
-      entero cabe de sobra. Cada línea que sale enciende su nodo, de derecha
-      a izquierda: ahí se ve, sin decirlo, que git log empieza por donde
-      estás y tira hacia atrás.
-
-      ``--all`` es la que no se puede explicar sin tener otras ramas, así
-      que aquí aparecen dos: dos commits que llevaban ahí desde siempre y
-      que no salían porque no estás en ellos. La lista les hace sitio por
-      fecha y arriba les crecen sus dos bifurcaciones. Lo que queda en la
-      terminal es un revoltijo plano, y eso es el montaje: el lío es lo que
-      justifica la bandera siguiente.
-
-      ``--graph`` lo desenreda. Las líneas del tronco ya nacían sangradas,
-      así que su asterisco cae en el hueco reservado sin empujar nada; las
-      de las ramas se corren una columna más y les crece la bifurcación,
-      que dibuja lo mismo que las aristas de arriba. Con una sola rama esta
-      bandera no tendría nada que enseñar; con dos, se ve para qué sirve.
-
-Las dos ramas van de morado y de ámbar, los colores que la charla ya usa para
-las ramas de trabajo en ``flujos_de_trabajo``, y son el primer aviso de que
-existen: ``ramas`` lo cobra.
-
-La salida corta deja escrito un ``(HEAD -> main)`` que aquí no se explica:
-es el segundo aviso de lo mismo, y lo recoge ``ramas`` con las dos pegatinas.
-"""
-
 from manim import (
     DOWN,
     LEFT,
@@ -86,38 +40,25 @@ from .tres_zonas import HASH, MENSAJE
 
 TITULO = "git log"
 
-# Aquí la cadena vive arriba del todo: debajo va la terminal. Las fotos
-# entran pequeñas y casi en el hueco del mensaje —arriba manda el título—, así
-# que convertirse en él es quedarse donde ya estaban.
 Y_CADENA = 1.72
 Y_FOTO = 2.45
 ESCALA_FOTO = 0.6
 
-# --- La terminal -----------------------------------------------------------
 ANCHO_TERM, ALTO_TERM = 9.8, 4.0
 Y_TERM = -1.45
 NOMBRE_TERM = "terminal"
 TAM_TERM = 14
 BUFF_TERM = 0.13
-X_FILAS = -4.35                   # el margen izquierdo de la ventana
-SANGRIA = 0.42                    # ver ``_filas``
-Y_ORDEN = 0.0                     # el alto del comando, fijo entre pantallas
-Y_SALIDA = -0.5                   # y el alto al que empieza la respuesta
+X_FILAS = -4.35
+SANGRIA = 0.42
+Y_ORDEN = 0.0
+Y_SALIDA = -0.5
 PASO_FILA = 0.33
 
 HASH_LARGO = f"{HASH}8a1c4f2b9e07"
 HASH_PREVIO = "9c1d04a7b3e5f168"
-# La identidad de ``configuracion``, tal cual: lo que se tecleó allí es lo
-# que git firma aquí.
 AUTOR = "carmen_electra <carmen.electra@unal.edu.co>"
 
-# ``git log`` a secas: la ficha entera de un commit, que no cabe. Debajo
-# empieza la del siguiente y se va apagando contra el borde de la ventana: por
-# ahí sigue el historial, y por eso abajo espera el pager.
-#
-# Los colores son los de la salida de verdad repartidos con los roles de la
-# charla: el hash en cián —el color del repositorio— y el mensaje en claro,
-# que es lo único que ha escrito una persona. Lo demás, gris.
 FICHA_LARGA = (
     (f"commit {HASH_LARGO}", "out"),
     (f"Author: {AUTOR}", "out"),
@@ -132,43 +73,25 @@ FICHA_SIGUIENTE = (
 DESVANECIDO = (0.4, 0.2)
 Y_SIGUIENTE = -2.15
 
-# La barra de estado del pager, pegada al fondo de la ventana: el ``:`` a la
-# izquierda y la tecla para salir a la derecha, como en ``less``.
 ALTO_PAGER = 0.5
 MARGEN_PAGER = 0.1
 
-# El mismo historial, del revés y de una línea por commit. El comando se
-# escribe bandera a bandera —cada una cambia algo que se ve— y la glosa de
-# cada una se queda escrita a la derecha.
 PEGATINA = "(HEAD -> main)"
 BANDERAS = (
     ("--oneline", "cada commit en una sola línea"),
     ("--all", "los commits de todas las ramas"),
     ("--graph", "dibuja el grafo de ramas y fusiones"),
 )
-# La tabla arranca donde acaba la salida más larga, no más a la derecha: las
-# definiciones son largas y tienen que caber dentro de la ventana.
 X_BANDERA, X_GLOSA = 0.1, 1.3
 Y_GLOSA = -2.35
 PASO_GLOSA = 0.46
 TAM_GLOSA = 13
 
-# La columna del grafo: las líneas de salida ya nacen sangradas para dejarle
-# el hueco, así que al llegar ``--graph`` no se mueve nada, solo aparece.
 X_LINEAS = X_FILAS + 0.42
 X_GRAFO = X_FILAS + 0.08
-X_TRONCO = X_GRAFO + 0.06         # el eje de la columna del tronco
-HUECO_GRAFO = 0.08                # lo que se abre el trazo en cada ``*``
+X_TRONCO = X_GRAFO + 0.06
+HUECO_GRAFO = 0.08
 
-# Y las dos ramas que no se ven hasta que se pide ``--all``. Son dos y no
-# una a propósito: con una sola el grafo no tiene nada que dibujar, y así
-# además se ven los dos casos. ``hyprland`` se abrió y se cerró —sale de
-# ``77ab``, lleva dos commits y se fusiona en ``9c1d``—; ``dotfiles`` sigue
-# abierta, colgando del último. Cada una con su color, de los que ya usa la
-# charla para las ramas de trabajo.
-#
-# (rama, color, de qué commit sale, en cuál se fusiona, sus commits)
-# y cada commit: (hash, mensaje, x del nodo, fila en la salida).
 RAMAS = (
     ("dotfiles", AMBAR, 2, None,
      (("c30b", "mis dotfiles", 3.4, 1),)),
@@ -178,31 +101,14 @@ RAMAS = (
 )
 N_FILAS_RAMA = sum(len(commits) for *_, commits in RAMAS)
 
-# Cómo queda la lista cuando entran esas filas, del más nuevo al más viejo:
-#
-#   0  7d3e  tronco        3  5f7d  hyprland     6  0e5f  tronco
-#   1  c30b  dotfiles      4  a91c  hyprland
-#   2  9c1d  tronco        5  77ab  tronco
-#
-# o sea, la fila final de cada commit del tronco:
 FILAS_TRONCO = (0, 2, 5, 6)
 Y_NODO_RAMA = 1.05
-SANGRIA_RAMA = 0.26               # lo que se corren sus líneas con --graph
+SANGRIA_RAMA = 0.26
 X_RAMA_COL = X_TRONCO + SANGRIA_RAMA
 
 
 def _filas(lineas, y_arriba, tam=TAM_TERM, buff=BUFF_TERM, opacidades=None,
            x=X_FILAS):
-    """Unas cuantas líneas de terminal, colocadas dentro de la ventana.
-
-    Las filas que empiezan por espacios se corren a mano: el texto llega a la
-    pantalla por Pango, que se come la sangría de la izquierda, y en ``git
-    log`` esa sangría es lo que hace que se reconozca el mensaje de un vistazo.
-
-    ``y_arriba`` fija el alto de la primera línea, no el centro del bloque: una
-    terminal escribe desde arriba, tenga tres líneas o diez, y así la respuesta
-    no sube y baja al cambiar de comando.
-    """
     filas = VGroup(*[
         linea_terminal(c, t, tam) for c, t in lineas
     ]).arrange(DOWN, buff=buff, aligned_edge=LEFT)
@@ -218,7 +124,6 @@ def _filas(lineas, y_arriba, tam=TAM_TERM, buff=BUFF_TERM, opacidades=None,
 
 
 def _tecla(letra, rotulo, color=AMBAR):
-    """Una tecla dibujada y lo que hace: cómo salir del pager, sin decirlo."""
     letras = texto(letra, 14, color=color)
     tapa = RoundedRectangle(
         width=0.38, height=0.34, corner_radius=0.07,
@@ -231,7 +136,6 @@ def _tecla(letra, rotulo, color=AMBAR):
 
 
 def _glosa(i):
-    """La bandera y lo que hace, en la mitad derecha de la ventana."""
     bandera, que_hace = BANDERAS[i]
     y = Y_GLOSA + (1 - i) * PASO_GLOSA
     return VGroup(
@@ -243,12 +147,6 @@ def _glosa(i):
 
 
 def _pager(marco):
-    """La barra de estado del pager, al fondo de la ventana.
-
-    Es lo que se queda esperando cuando la salida no cabe, y dibujarla como
-    una barra —y no como un ``:`` suelto entre líneas— es lo que hace que se
-    reconozca: eso es estar dentro de ``less``, no en el prompt.
-    """
     caja = marco[0]
     barra = RoundedRectangle(
         width=caja.width - 2 * MARGEN_PAGER - 0.16, height=ALTO_PAGER,
@@ -266,8 +164,6 @@ def _pager(marco):
 def construir(scene):
     encabezado = hacer_titulo(TITULO)
     nodos, aristas = cadena(Y_CADENA)
-    # La del último commit va en cián, como en la diapositiva anterior: es
-    # la que se acaba de hacer.
     fotos = VGroup(*[
         foto_proyecto(ESCALA_FOTO,
                       RAMA_MAIN if ultimo else SECUNDARIO, vacia=not ultimo)
@@ -275,8 +171,6 @@ def construir(scene):
         for x, ultimo in zip(X_CADENA, (False, False, False, True))
     ])
 
-    # El historial de la diapositiva anterior, con sus fotos, y las fotos
-    # convertidas en el mensaje de cada commit: eso es lo que lee git log.
     scene.play(FadeIn(encabezado, shift=DOWN * 0.2), run_time=0.6)
     scene.play(
         LaggedStart(*[
@@ -295,12 +189,11 @@ def construir(scene):
         run_time=0.8,
     )
 
-    # ---------------------- La respuesta larga, entera ---------------------
     marco = ventana(ANCHO_TERM, ALTO_TERM, NOMBRE_TERM, TAM_TERM - 1)
     marco.move_to([0, Y_TERM, 0])
     orden = _filas((("git log", "cmd"),), Y_ORDEN)
     ficha = _filas(FICHA_LARGA, Y_SALIDA)
-    ficha[0].set_color(RAMA_MAIN)     # la línea del hash, como la pinta git
+    ficha[0].set_color(RAMA_MAIN)
     siguiente = _filas(FICHA_SIGUIENTE, Y_SIGUIENTE, opacidades=DESVANECIDO)
     pager = _pager(marco)
 
@@ -318,11 +211,7 @@ def construir(scene):
     scene.play(FadeIn(pager, shift=UP * 0.12), run_time=0.5)
     scene.next_slide()
 
-    # ---------------------- --oneline: un commit, una línea ----------------
-    # El comando se escribe bandera a bandera. Cada una cambia algo que se ve,
-    # y por eso cada una tiene su propia pausa.
     def _orden(n):
-        """El comando con las ``n`` primeras banderas puestas."""
         banderas = " ".join(bandera for bandera, _ in BANDERAS[:n])
         return _filas(((f"git log {banderas}".rstrip(), "cmd"),), Y_ORDEN)
 
@@ -339,8 +228,6 @@ def construir(scene):
         run_time=1.0,
     )
 
-    # El resto del historial, una línea por commit, encendiendo su nodo: se ve
-    # sin decirlo que git log empieza por donde estás y tira hacia atrás.
     lineas = VGroup(primera)
     for i, (corto, mensaje) in enumerate(reversed(COMMITS[:-1])):
         fila = _filas(((f"{corto} {mensaje}", "out"),),
@@ -357,12 +244,6 @@ def construir(scene):
                run_time=0.6)
     scene.next_slide()
 
-    # ---------------------- --all: las ramas que no estabas viendo ---------
-    # Sin la bandera, git log solo enseña por dónde has pasado tú. Con ella
-    # aparecen tres commits que llevaban ahí desde siempre, repartidos en dos
-    # ramas: una que se abrió y se cerró y otra que sigue abierta. La lista
-    # les hace sitio por fecha y queda un revoltijo plano en el que no se sabe
-    # qué sale de dónde. Ese lío es el que justifica la bandera siguiente.
     scene.play(
         Transform(orden, _orden(2)),
         *[fila.animate.shift(DOWN * (destino - i) * PASO_FILA)
@@ -376,8 +257,6 @@ def construir(scene):
     for rama, color, i_padre, i_merge, commits in RAMAS:
         nodos_rama, filas, dibujo = VGroup(), VGroup(), VGroup()
         for j, (corto, mensaje, x, i_fila) in enumerate(commits):
-            # El nombre de la rama solo va pegado a su commit más nuevo, que
-            # es a donde apunta de verdad.
             rotulo = f"{corto} {mensaje}"
             if j == 0:
                 rotulo = f"{corto} ({rama}) {mensaje}"
@@ -389,8 +268,6 @@ def construir(scene):
         filas_rama.add(*filas)
         columnas.append((filas, color, i_merge is not None))
 
-        # El trazo: sale del tronco, encadena sus commits (del más viejo al
-        # más nuevo) y, si la rama se cerró, vuelve a entrar en el tronco.
         cadena_rama = [nodos[i_padre], *reversed(nodos_rama)]
         if i_merge is not None:
             cadena_rama.append(nodos[i_merge])
@@ -407,17 +284,6 @@ def construir(scene):
     scene.play(FadeIn(_glosa(1), shift=RIGHT * 0.12), run_time=0.5)
     scene.next_slide()
 
-    # ---------------------- --graph: quién sale de dónde -------------------
-    # Las líneas del tronco ya nacían sangradas, así que su asterisco cae en
-    # el hueco que tenía reservado y no empuja nada. Las de las ramas se
-    # corren una columna más, y en esa columna se dibuja lo mismo que arriba:
-    # por dónde salió cada rama y, si se cerró, por dónde volvió.
-    #
-    # Las columnas son trazos y no barras de texto: una barra por renglón deja
-    # un hueco entre renglón y renglón y la columna se lee a rayas. Así el
-    # tronco baja entero y solo se abre donde está su propio ``*``, que es lo
-    # que hace el ``|`` de git, y las diagonales terminan justo encima del
-    # commit al que van, de modo que todo se toca.
     scene.play(Transform(orden, _orden(3)), run_time=0.5)
     scene.play(
         *[fila.animate.shift(RIGHT * SANGRIA_RAMA) for fila in filas_rama],
@@ -435,8 +301,6 @@ def construir(scene):
         for y in ys_tronco
     ])
     for (y, propio), (y_sig, propio_sig) in zip(filas_todas, filas_todas[1:]):
-        # El hueco solo se abre en sus commits: en las filas de las ramas el
-        # tronco pasa de largo, que es justo lo que significa esa barra.
         tronco.add(Line(
             [X_TRONCO, y - (HUECO_GRAFO if propio else 0), 0],
             [X_TRONCO, y_sig + (HUECO_GRAFO if propio_sig else 0), 0],
@@ -454,8 +318,6 @@ def construir(scene):
             columna.add(Line([X_RAMA_COL, y - HUECO_GRAFO, 0],
                              [X_RAMA_COL, y_sig + HUECO_GRAFO, 0],
                              color=color, stroke_width=2.5))
-        # La salida: baja hasta su padre, el commit del tronco de la fila de
-        # abajo. Y la vuelta, si la rama se cerró: baja desde la fusión.
         columna.add(Line([X_RAMA_COL, ys[-1] - HUECO_GRAFO, 0],
                          [X_TRONCO, ys[-1] - PASO_FILA + HUECO_GRAFO, 0],
                          color=color, stroke_width=2.5))

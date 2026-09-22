@@ -1,32 +1,3 @@
-"""Diapositiva 18 — ``git reset``: ¿hasta dónde deshace?
-
-Casi todo el susto con ``reset`` viene de no saber hasta dónde llega cada
-variante, así que aquí no se cuenta: se ve. Se reconstruye el mapa de carriles
-que nace al final de ``tres_zonas`` —directorio de trabajo, staging,
-repositorio— con un punto de partida que ya conoce todo el mundo: un commit
-hecho, algo añadido y algo sin añadir.
-
-Sobre ese mismo mapa se lanzan los tres resets uno detrás de otro, siempre el
-mismo comando y siempre volviendo al punto de partida, para que lo único que
-cambie de una pasada a otra sea la bandera. Las tres mueven la rama un commit
-atrás —eso es ``reset``, y es lo que nunca cambia—; lo que cambia es qué hacen
-con lo que ya tenías delante:
-
-  * ``--soft`` no toca nada de lo tuyo y encima deja en staging lo que traía el
-    commit deshecho: es un "me equivoqué de mensaje" y poco más.
-  * ``--mixed`` (el que sale por defecto) vacía el staging, pero los cambios no
-    se pierden: bajan al directorio de trabajo, sin añadir.
-  * ``--hard`` es el único que borra de verdad, y solo se lleva lo que nunca
-    llegó a estar en un commit.
-
-Al final, la tabla de siempre como resumen: las tres banderas en filas, las
-tres zonas en columnas y un vistazo que se lee en dos segundos.
-
-Sigue en ``git_checkout`` (viajar al pasado) y ``git_reflog`` (la red debajo
-del trapecio); las tres dicen lo mismo desde ángulos distintos: se puede
-volver atrás.
-"""
-
 from manim import (
     DOWN,
     LEFT,
@@ -59,22 +30,16 @@ from estilo import (
 
 from .tres_zonas import X_CARRILES, carriles_zonas
 
-# El mismo título de punta a punta: la diapositiva entera va del comando,
-# y lo que cambia de una pantalla a otra ya lo dice el propio dibujo.
 TITULO = "git reset"
 
-# --- El mapa de carriles, bajado y recortado por abajo ---------------------
-# Los carriles son los de ``tres_zonas`` (misma x, mismos iconos), pero aquí
-# caen algo más abajo: sin la terminal debajo sobra sitio al pie, y bajarlos
-# reparte el hueco en vez de dejar el dibujo apelotonado contra el título.
 BAJADA_MAPA = 0.45
-Y_CARRIL = -2.05          # hasta dónde llega la línea de cada carril
-Y_FICHA = 0.0             # la fila donde espera lo que ya tenías
-Y_BAJADA = -1.2           # donde cae lo que el reset saca del staging
-Y_NUEVO = 0.27            # el commit que se va a deshacer
-Y_VIEJO = -1.07           # al que retrocede la rama
+Y_CARRIL = -2.05
+Y_FICHA = 0.0
+Y_BAJADA = -1.2
+Y_NUEVO = 0.27
+Y_VIEJO = -1.07
 RADIO = 0.3
-Y_MARCA = -2.5            # el veredicto de cada carril, debajo de su línea
+Y_MARCA = -2.5
 Y_ORDEN = -3.2
 
 HASH_NUEVO = "9c1d"
@@ -82,16 +47,12 @@ HASH_VIEJO = "77ab"
 ALTO_ARCHIVO = 0.46
 TAM_FICHA = 13
 
-# (bandera, color, qué le pasa a cada zona, dónde cae lo del commit).
-# "retrocede" = la rama se mueve, y es lo único igual en las tres. Lo que hace
-# cada una no se escribe en ningún sitio: se ve moverse, y lo dice quien habla.
 RESETS = (
     ("--soft", SECUNDARIO, ("intacto", "intacto", "retrocede"), 1),
     ("--mixed", AMBAR, ("intacto", "vacia", "retrocede"), 0),
     ("--hard", ERROR, ("borra", "borra", "retrocede"), None),
 )
 
-# --- La tabla del resumen --------------------------------------------------
 COLUMNAS = (
     ("directorio de trabajo", -2.9, SECUNDARIO),
     ("staging", 0.65, STAGING),
@@ -101,15 +62,10 @@ X_BANDERA = -6.4
 Y_CABECERA = 1.25
 Y_PRIMERA = 0.3
 PASO_FILA = 0.95
-Y_TABLA = -0.45           # el centro del hueco que deja el título
+Y_TABLA = -0.45
 
 
 def _marca(estado, x, y):
-    """El veredicto de una zona: intacta, vaciada, borrada o retrocediendo.
-
-    Mismo cartelito en las pasadas y en la tabla del final, a propósito: el
-    resumen no estrena lenguaje, repite el que se acaba de ver moverse.
-    """
     if estado == "intacto":
         icono, etiqueta, color = visto(OK, tam=0.13), "intacto", OK
     elif estado == "vacia":
@@ -123,13 +79,6 @@ def _marca(estado, x, y):
 
 
 def _ficha(nombre, color, carril, y):
-    """Un bulto de cambios plantado en un carril, dentro de su caja.
-
-    La caja no es adorno: el carril es una línea gruesa que si no pasaría por
-    encima del icono. Rellena del color de los nodos, lo tapa —el mismo truco
-    que las paradas de ``tres_zonas``— y de paso agrupa icono y nombre en lo
-    que son, una sola cosa.
-    """
     contenido = VGroup(
         archivo(color=color, alto=ALTO_ARCHIVO),
         texto(nombre, TAM_FICHA, color=color),
@@ -143,12 +92,6 @@ def _ficha(nombre, color, carril, y):
 
 
 def _historial():
-    """Los dos commits del carril del repositorio, con la rama pegada al último.
-
-    No hace falta dibujar la arista entre ellos: el propio carril es la línea
-    del repositorio, y los une igual. Devuelve los punteros aparte, que son los
-    que se mueven —y moverlos es todo lo que hace ``reset``—.
-    """
     nuevo = nodo_commit(HASH_NUEVO, RAMA_MAIN, RADIO, 14)
     nuevo.move_to([X_CARRILES[2], Y_NUEVO, 0])
     viejo = nodo_commit(HASH_VIEJO, RAMA_MAIN, RADIO, 14)
@@ -160,7 +103,6 @@ def _historial():
 
 
 def _partida():
-    """Lo que hay antes de cada reset: dos cambios esperando, cada uno en su zona."""
     return VGroup(
         _ficha("sin añadir", ERROR, 0, Y_FICHA),
         _ficha("añadido", STAGING, 1, Y_FICHA),
@@ -173,7 +115,6 @@ def construir(scene):
     for pista, x in zip(pistas, X_CARRILES):
         pista[2].put_start_and_end_on(pista[2].get_start(), [x, Y_CARRIL, 0])
 
-    # ---------------------- El punto de partida ----------------------------
     scene.play(FadeIn(encabezado, shift=DOWN * 0.2), run_time=0.6)
     scene.play(
         LaggedStart(*[FadeIn(pista[0], shift=DOWN * 0.15) for pista in pistas],
@@ -200,15 +141,11 @@ def construir(scene):
     )
     scene.next_slide()
 
-    # ---------------------- Los tres, uno por uno --------------------------
     for bandera, color, estados, destino in RESETS:
         orden = texto(f"git reset {bandera} HEAD~1", 20, color=color)
         orden.move_to([0, Y_ORDEN, 0])
         scene.play(FadeIn(orden, shift=UP * 0.1), run_time=0.45)
 
-        # Lo que hacen las tres: la rama suelta el último commit y retrocede.
-        # El commit no se borra —se queda ahí, sin nadie que lo señale—, y por
-        # eso se apaga en vez de desaparecer.
         marca_repo = _marca(estados[2], X_CARRILES[2], Y_MARCA)
         scene.play(
             punteros.animate.next_to(viejo, RIGHT, buff=0.28),
@@ -217,8 +154,6 @@ def construir(scene):
             run_time=1.0,
         )
 
-        # Y lo que cambia de una bandera a otra: qué pasa con lo que ya tenías
-        # en cada carril, de izquierda a derecha y uno por uno.
         marcas = VGroup(marca_repo)
         aspas = VGroup()
         for i, estado in enumerate(estados[:2]):
@@ -226,7 +161,6 @@ def construir(scene):
             if estado == "intacto":
                 efecto = Indicate(fichas[i], color=OK, scale_factor=1.08)
             elif estado == "vacia":
-                # No se pierde: se desmarca y baja al carril de al lado.
                 efecto = Transform(
                     fichas[i], _ficha("sin añadir", ERROR, 0, Y_BAJADA))
             else:
@@ -239,8 +173,6 @@ def construir(scene):
             scene.play(efecto, FadeIn(marca, shift=UP * 0.1), run_time=0.9)
             marcas.add(marca)
 
-        # Lo que traía el commit deshecho tiene que caer en algún sitio, y ese
-        # sitio es justo lo que distingue ``--soft`` de ``--mixed``.
         if destino is not None:
             bulto = nodo_commit("", RAMA_MAIN, 0.15).move_to(nuevo.get_center())
             scene.add(bulto)
@@ -257,10 +189,6 @@ def construir(scene):
 
         scene.next_slide()
 
-        # Y vuelta al punto de partida, para que la siguiente bandera se lea
-        # contra lo mismo y no contra lo que dejó la anterior. Las fichas se
-        # transforman en vez de cambiarse por otras: así se ve rebobinar lo que
-        # el reset acababa de mover, y ninguna caja se funde sobre su carril.
         scene.play(
             FadeOut(orden), FadeOut(marcas), FadeOut(aspas),
             Transform(fichas, _partida()),
@@ -269,7 +197,6 @@ def construir(scene):
             run_time=0.7,
         )
 
-    # ---------------------- El resumen: la tabla ---------------------------
     cabeceras = VGroup(*[
         texto(nombre, 16, color=color).move_to([x, Y_CABECERA, 0])
         for nombre, x, color in COLUMNAS
@@ -289,9 +216,6 @@ def construir(scene):
         ])
         filas.add(VGroup(nombre, marcas))
 
-    # Cada celda se coloca por su columna y su fila, que es lo cómodo para
-    # escribirla pero deja el bloque escorado; se centra entero de una vez en
-    # vez de ir cuadrando números a mano.
     VGroup(cabeceras, raya, filas).move_to([0, Y_TABLA, 0])
 
     scene.play(
